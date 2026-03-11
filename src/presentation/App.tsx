@@ -37,7 +37,7 @@ export default function App() {
     nextQuestion(newClef);
   };
 
-  // 鍵盤モード用（jaNameで比較）
+  // 鍵盤モード用（jaNameで比較、同じjaNameは1回タップでOK）
   const handleKeyboardAnswer = (note: NoteData) => {
     if (answerState !== "waiting") return;
 
@@ -47,8 +47,8 @@ export default function App() {
       const next = new Set(answeredNames);
       next.add(note.jaName);
       setAnsweredNames(next);
-      // 全部当てた？
-      if (next.size === currentNotes.length) {
+      // ユニークなjaName全部当てた？
+      if (next.size === correctJaNames.size) {
         setAnswerState("correct");
       }
     } else if (!answeredNames.has(note.jaName)) {

@@ -2,23 +2,22 @@ import type { ClefType } from "../domain/clef";
 import type { NoteData } from "../domain/note";
 import { getNotesForClef } from "../domain/noteCollection";
 
+function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
 export function pickRandomNote(clef: ClefType): NoteData {
   const notes = getNotesForClef(clef);
   return notes[Math.floor(Math.random() * notes.length)];
 }
 
-// 和音用: 異なるjaNameの音符を3つランダムに選ぶ
+// 和音用: 音符を3つランダムに選ぶ（jaName重複OK）
 export function pickRandomChord(clef: ClefType): NoteData[] {
-  const notes = getNotesForClef(clef);
-  const shuffled = [...notes].sort(() => Math.random() - 0.5);
-  const picked: NoteData[] = [];
-  const usedJaNames = new Set<string>();
-  for (const n of shuffled) {
-    if (!usedJaNames.has(n.jaName)) {
-      picked.push(n);
-      usedJaNames.add(n.jaName);
-      if (picked.length === 3) break;
-    }
-  }
+  const picked = shuffle(getNotesForClef(clef)).slice(0, 3);
   return picked.sort((a, b) => a.position - b.position);
 }
