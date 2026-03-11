@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
-import { type ClefType, getBaseClef, isKeyboardMode, isChordMode } from "../domain/clef";
+import { type ClefType, getBaseClef, isChordMode } from "../domain/clef";
 import type { NoteData } from "../domain/note";
-import { pickRandomNote, pickRandomChord, generateChoices } from "../application/quizService";
+import { pickRandomNote, pickRandomChord } from "../application/quizService";
 import Staff from "./components/Staff";
 import HamburgerMenu from "./components/HamburgerMenu";
 import PianoKeyboard from "./components/PianoKeyboard";
@@ -10,13 +10,9 @@ import "./App.css";
 type AnswerState = "waiting" | "correct" | "wrong";
 
 export default function App() {
-  const [clef, setClef] = useState<ClefType>("treble");
-  const [currentNotes, setCurrentNotes] = useState<NoteData[]>(() => [pickRandomNote("treble")]);
-  const [choices, setChoices] = useState<NoteData[]>(() =>
-    generateChoices(currentNotes[0], "treble")
-  );
+  const [clef, setClef] = useState<ClefType>("treble-keyboard");
+  const [currentNotes, setCurrentNotes] = useState<NoteData[]>(() => [pickRandomNote("treble-keyboard")]);
   const [answerState, setAnswerState] = useState<AnswerState>("waiting");
-  const [selectedName, setSelectedName] = useState<string | null>(null);
 
   // 鍵盤モード用: 正解済みのjaName、間違えたname
   const [answeredNames, setAnsweredNames] = useState<Set<string>>(new Set());
@@ -30,30 +26,15 @@ export default function App() {
         setCurrentNotes([pickRandomNote(c)]);
       }
       setAnswerState("waiting");
-      setSelectedName(null);
       setAnsweredNames(new Set());
       setWrongName(null);
     },
     [clef]
   );
 
-  // choicesはnextQuestionの後に更新（currentNotesの変化に依存しないよう分離）
-  const currentNote = currentNotes[0];
-
   const handleClefChange = (newClef: ClefType) => {
     setClef(newClef);
     nextQuestion(newClef);
-  };
-
-  // テキストボタン用
-  const handleChoice = (choice: NoteData) => {
-    if (answerState !== "waiting") return;
-    setSelectedName(choice.name);
-    if (choice.name === currentNote.name) {
-      setAnswerState("correct");
-    } else {
-      setAnswerState("wrong");
-    }
   };
 
   // 鍵盤モード用（jaNameで比較）
@@ -76,12 +57,6 @@ export default function App() {
     }
   };
 
-  // choicesを生成（テキストボタンモード用）
-  // nextQuestion後にcurrentNotesが変わるので、ここで同期
-  const displayChoices = isKeyboardMode(clef)
-    ? []
-    : generateChoices(currentNote, clef);
-
   // 不正解時の正解テキスト
   const correctAnswerText = currentNotes
     .map((n) => `${n.jaName}（${n.name}）`)
@@ -102,43 +77,14 @@ export default function App() {
         {isChordMode(clef) ? "この和音は何？" : "この音符は何？"}
       </p>
 
-      {isKeyboardMode(clef) ? (
-        <PianoKeyboard
-          clef={clef}
-          correctNotes={currentNotes}
-          onAnswer={handleKeyboardAnswer}
-          answeredNames={answeredNames}
-          wrongName={wrongName}
-          finished={answerState !== "waiting"}
-        />
-      ) : (
-        <div className="choices">
-          {displayChoices.map((choice) => {
-            let btnClass = "choice-btn";
-            if (answerState !== "waiting" && choice.name === selectedName) {
-              btnClass +=
-                choice.name === currentNote.name ? " correct" : " wrong";
-            }
-            if (
-              answerState === "wrong" &&
-              choice.name === currentNote.name
-            ) {
-              btnClass += " correct";
-            }
-            return (
-              <button
-                key={choice.name}
-                className={btnClass}
-                onClick={() => handleChoice(choice)}
-                disabled={answerState !== "waiting"}
-              >
-                {choice.jaName}
-                <span className="note-name">{choice.name}</span>
-              </button>
-            );
-          })}
-        </div>
-      )}
+      <PianoKeyboard
+        clef={clef}
+        correctNotes={currentNotes}
+        onAnswer={handleKeyboardAnswer}
+        answeredNames={answeredNames}
+        wrongName={wrongName}
+        finished={answerState !== "waiting"}
+      />
 
       {answerState !== "waiting" && (
         <div className="result-area">

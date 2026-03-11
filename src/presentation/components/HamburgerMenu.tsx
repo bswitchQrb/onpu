@@ -7,7 +7,7 @@ interface HamburgerMenuProps {
   onClefChange: (clef: ClefType) => void;
 }
 
-const CLEF_OPTIONS: ClefType[] = ["treble", "treble-keyboard", "treble-chord", "bass", "bass-keyboard", "bass-chord"];
+const CLEF_OPTIONS: ClefType[] = ["treble-keyboard", "treble-chord", "bass-keyboard", "bass-chord"];
 
 export default function HamburgerMenu({ currentClef, onClefChange }: HamburgerMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
