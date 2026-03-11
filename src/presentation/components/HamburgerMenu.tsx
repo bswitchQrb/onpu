@@ -34,7 +34,7 @@ export default function HamburgerMenu({ currentClef, onClefChange }: HamburgerMe
   return (
     <div className="hamburger-menu" ref={menuRef}>
       <button
-        className="hamburger-btn"
+        className={`hamburger-btn${isOpen ? " open" : ""}`}
         onClick={() => setIsOpen((v) => !v)}
         aria-label={t("menu.ariaLabel")}
       >

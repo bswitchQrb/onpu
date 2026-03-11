@@ -1,14 +1,16 @@
 {
   "app.title": "おんぷクイズ",
   "menu.ariaLabel": "メニュー",
-  "clef.gClef-keyboard": "ト音記号（鍵盤）",
-  "clef.gClef-chord": "ト音記号（3音）",
-  "clef.fClef-keyboard": "ヘ音記号（鍵盤）",
-  "clef.fClef-chord": "ヘ音記号（3音）",
+  "clef.gClef-keyboard": "ト音記号\n（単音）",
+  "clef.gClef-chord": "ト音記号\n（3音）",
+  "clef.fClef-keyboard": "ヘ音記号\n（単音）",
+  "clef.fClef-chord": "ヘ音記号\n（3音）",
   "quiz.questionNote": "この音符は何？",
-  "quiz.questionChord": "この和音は何？",
+  "quiz.questionChord": "この3音は何？",
   "quiz.correct": "正解！",
   "quiz.wrong": "残念...",
   "quiz.answerPrefix": "答えは ",
-  "quiz.next": "次の問題"
+  "quiz.next": "次の問題",
+  "quiz.reveal": "答えを見る",
+  "quiz.reroll": "別の問題にする"
 }

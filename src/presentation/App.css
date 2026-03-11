@@ -22,6 +22,7 @@
   justify-content: center;
   width: 100%;
   position: relative;
+  z-index: 20;
   margin-bottom: 12px;
 }
 
@@ -41,8 +42,8 @@
 .hamburger-btn {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  padding: 8px;
+  gap: 5px;
+  padding: 10px;
   background: none;
   border: none;
   cursor: pointer;
@@ -52,9 +53,23 @@
 .hamburger-icon {
   display: block;
   width: 22px;
-  height: 2.5px;
+  height: 2px;
   background: #4a3f8a;
   border-radius: 2px;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  transform-origin: center;
+}
+
+.hamburger-btn.open .hamburger-icon:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.hamburger-btn.open .hamburger-icon:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger-btn.open .hamburger-icon:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
 }
 
 .hamburger-dropdown {
@@ -62,41 +77,69 @@
   right: 0;
   top: 100%;
   margin-top: 4px;
-  background: #fff;
-  border: 2px solid #b8b0e0;
-  border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1.5px solid rgba(184, 176, 224, 0.4);
+  border-radius: 14px;
+  box-shadow: 0 8px 32px rgba(74, 63, 138, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
   overflow: hidden;
   z-index: 10;
-  min-width: 140px;
+  min-width: 160px;
+  animation: dropdown-in 0.2s ease-out;
+}
+
+@keyframes dropdown-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .dropdown-item {
   display: block;
   width: 100%;
-  padding: 12px 16px;
+  padding: 14px 16px 14px 20px;
   border: none;
   background: none;
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 600;
-  color: #4a3f8a;
+  color: #5a5080;
   cursor: pointer;
   text-align: left;
-  transition: background 0.15s;
+  white-space: pre-line;
+  line-height: 1.4;
+  transition: background 0.15s, color 0.15s;
   -webkit-tap-highlight-color: transparent;
+  position: relative;
 }
 
 .dropdown-item:not(:last-child) {
-  border-bottom: 1px solid #e8e4f0;
+  border-bottom: 1px solid rgba(184, 176, 224, 0.25);
 }
 
 .dropdown-item.active {
-  background: #f4f0ff;
   color: #6c5ce7;
+  background: rgba(108, 92, 231, 0.08);
+}
+
+.dropdown-item.active::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 3px;
+  background: #6c5ce7;
+  border-radius: 0 3px 3px 0;
 }
 
 .dropdown-item:active {
-  background: #e8e4f0;
+  background: rgba(108, 92, 231, 0.12);
 }
 
 .staff-container {
@@ -106,6 +149,28 @@
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
   margin-bottom: 16px;
   width: 100%;
+  position: relative;
+}
+
+.reroll-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 6px;
+  border: none;
+  border-radius: 50%;
+  background: none;
+  color: #b8b0e0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 0.15s;
+}
+
+.reroll-btn:active {
+  color: #6c5ce7;
 }
 
 .question {
@@ -113,6 +178,22 @@
   color: #333;
   margin-bottom: 16px;
   font-weight: 600;
+}
+
+.reveal-btn {
+  padding: 8px 20px;
+  border: 1.5px solid #e5a0a0;
+  border-radius: 10px;
+  background: none;
+  font-size: 0.9rem;
+  color: #c06060;
+  cursor: pointer;
+  margin-top: 12px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.reveal-btn:active {
+  background: #fef0f0;
 }
 
 .result-area {
