@@ -1,96 +1,72 @@
+import { useRef, useEffect } from "react";
+import { Renderer, Stave, StaveNote, Voice, Formatter } from "vexflow";
 import type { NoteData } from "../../domain/note";
-import type { ClefType } from "../../domain/clef";
-import ClefSymbol from "./ClefSymbol";
+import type { BaseClefType } from "../../domain/clef";
 
 interface StaffProps {
-  note: NoteData;
-  clef: ClefType;
+  notes: NoteData[];
+  clef: BaseClefType;
 }
 
-const WIDTH = 300;
-const HEIGHT = 200;
-const LINE_SPACING = 16;
-const STAFF_TOP = 50;
-const NOTE_X = 190;
-const BOTTOM_LINE_Y = STAFF_TOP + 4 * LINE_SPACING;
-
-// position(0=一番下の線)からY座標を計算
-function noteY(position: number): number {
-  return BOTTOM_LINE_Y - position * (LINE_SPACING / 2);
+// NoteData.name ("C4") → VexFlow key ("c/4")
+function toVexKey(name: string): string {
+  const letter = name.slice(0, -1).toLowerCase();
+  const octave = name.slice(-1);
+  return `${letter}/${octave}`;
 }
 
-export default function Staff({ note, clef }: StaffProps) {
-  const ny = noteY(note.position);
-  const stemUp = note.position < 4;
-  const stemX = stemUp ? NOTE_X + 7 : NOTE_X - 7;
-  const stemEndY = stemUp ? ny - 40 : ny + 40;
+export default function Staff({ notes, clef }: StaffProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  // 加線を計算
-  const ledgerLines: number[] = [];
-  if (note.position <= -2) {
-    for (let p = -2; p >= note.position; p -= 2) {
-      ledgerLines.push(noteY(p));
-    }
-  }
-  if (note.position >= 10) {
-    for (let p = 10; p <= note.position; p += 2) {
-      ledgerLines.push(noteY(p));
-    }
-  }
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    // 前回の描画をクリア
+    el.innerHTML = "";
+
+    const scale = 1.5;
+    const staveWidth = 160;
+    const width = staveWidth * scale;
+    const height = 200;
+
+    const renderer = new Renderer(el, Renderer.Backends.SVG);
+    renderer.resize(width, height);
+    const context = renderer.getContext();
+    context.scale(scale, scale);
+
+    // 五線を描画（上に加線がある場合のスペース確保）
+    const stave = new Stave(0, 10, staveWidth);
+    stave.addClef(clef);
+    stave.setContext(context);
+    stave.draw();
+
+    // 音符を作成（和音は keys 配列に複数指定）
+    const keys = notes.map((n) => toVexKey(n.name));
+    const staveNote = new StaveNote({
+      keys,
+      duration: "q",
+      clef,
+    });
+
+    // Voice に追加して描画
+    const voice = new Voice({ numBeats: 1, beatValue: 4 });
+    voice.setStrict(false);
+    voice.addTickables([staveNote]);
+
+    // 五線の中央付近に音符を配置
+    new Formatter().joinVoices([voice]).format([voice], 1);
+    const noteAreaWidth = staveWidth - stave.getNoteStartX();
+    staveNote.setXShift(noteAreaWidth / 2 - 15);
+
+    voice.setStave(stave);
+    voice.draw(context);
+  }, [notes, clef]);
 
   return (
-    <svg
-      viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
-      style={{ display: "block", width: "100%", height: "auto" }}
-    >
-      {/* 五線 */}
-      {[0, 1, 2, 3, 4].map((i) => (
-        <line
-          key={i}
-          x1={40}
-          y1={STAFF_TOP + i * LINE_SPACING}
-          x2={260}
-          y2={STAFF_TOP + i * LINE_SPACING}
-          stroke="#444"
-          strokeWidth={1.2}
-        />
-      ))}
-
-      {/* 音記号 */}
-      <ClefSymbol clef={clef} staffTop={STAFF_TOP} lineSpacing={LINE_SPACING} />
-
-      {/* 加線 */}
-      {ledgerLines.map((ly, i) => (
-        <line
-          key={`ledger-${i}`}
-          x1={NOTE_X - 14}
-          y1={ly}
-          x2={NOTE_X + 14}
-          y2={ly}
-          stroke="#444"
-          strokeWidth={1.2}
-        />
-      ))}
-
-      {/* 音符の頭 */}
-      <ellipse
-        cx={NOTE_X}
-        cy={ny}
-        rx={7.5}
-        ry={5.5}
-        fill="#222"
-        transform={`rotate(-15 ${NOTE_X} ${ny})`}
-      />
-
-      {/* ステム（棒） */}
-      <line
-        x1={stemX}
-        y1={ny}
-        x2={stemX}
-        y2={stemEndY}
-        stroke="#222"
-        strokeWidth={1.6}
-      />
-    </svg>
+    <div
+      ref={containerRef}
+      style={{ width: "100%", display: "flex", justifyContent: "center" }}
+    />
   );
 }
