@@ -1,5 +1,5 @@
 import { useRef, useEffect } from "react";
-import { Renderer, Stave, StaveNote, Voice, Formatter } from "vexflow";
+import { Renderer, Stave, StaveNote, Voice, Formatter, Stem } from "vexflow";
 import type { NoteData } from "../../domain/note";
 import type { BaseClefType } from "../../domain/clef";
 
@@ -43,10 +43,14 @@ export default function Staff({ notes, clef }: StaffProps) {
 
     // 音符を作成（和音は keys 配列に複数指定）
     const keys = notes.map((n) => toVexKey(n.name));
+    // B4（第3線）以上なら棒を下向きに
+    const highestPosition = Math.max(...notes.map((n) => n.position));
+    const stemDirection = highestPosition >= 4 ? Stem.DOWN : Stem.UP;
     const staveNote = new StaveNote({
       keys,
       duration: "q",
       clef,
+      stemDirection,
     });
 
     // Voice に追加して描画
