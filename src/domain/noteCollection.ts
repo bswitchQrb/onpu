@@ -36,6 +36,32 @@ export const BASS_NOTES: NoteData[] = [
   { name: "C4", jaName: "ド", position: 10, ledgerLines: 1 },
 ];
 
+// ト音記号 鍵盤UI用（F3〜B5）
+export const TREBLE_KEYBOARD_NOTES: NoteData[] = [
+  { name: "F3", jaName: "ファ", position: -6, ledgerLines: -3 },
+  { name: "G3", jaName: "ソ", position: -5, ledgerLines: -2 },
+  ...TREBLE_NOTES,
+  { name: "B5", jaName: "シ", position: 11, ledgerLines: 2 },
+];
+
+// ヘ音記号 鍵盤UI用（E2〜B3）18白鍵でト音と揃える
+export const BASS_KEYBOARD_NOTES: NoteData[] = [
+  { name: "E2", jaName: "ミ", position: -3, ledgerLines: -1 },
+  { name: "F2", jaName: "ファ", position: -2, ledgerLines: -1 },
+  ...BASS_NOTES,
+  { name: "D4", jaName: "レ", position: 11, ledgerLines: 2 },
+  { name: "E4", jaName: "ミ", position: 12, ledgerLines: 2 },
+  { name: "F4", jaName: "ファ", position: 13, ledgerLines: 3 },
+  { name: "G4", jaName: "ソ", position: 14, ledgerLines: 3 },
+  { name: "A4", jaName: "ラ", position: 15, ledgerLines: 4 },
+];
+
+import { getBaseClef } from "./clef";
+
 export function getNotesForClef(clef: ClefType): NoteData[] {
-  return clef === "treble" ? TREBLE_NOTES : BASS_NOTES;
+  return getBaseClef(clef) === "bass" ? BASS_NOTES : TREBLE_NOTES;
+}
+
+export function getKeyboardNotesForClef(clef: ClefType): NoteData[] {
+  return getBaseClef(clef) === "bass" ? BASS_KEYBOARD_NOTES : TREBLE_KEYBOARD_NOTES;
 }
