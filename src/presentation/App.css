@@ -213,7 +213,6 @@
 .piano-keyboard {
   margin-bottom: 20px;
   width: 100%;
-  overflow-x: auto;
   display: flex;
   justify-content: center;
 }
@@ -221,14 +220,28 @@
 .piano-keys {
   display: flex;
   position: relative;
+  width: 100%;
+  max-width: 400px;
+}
+
+@media (max-width: 480px) {
+  .piano-keyboard {
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+  }
+
+  .piano-keys {
+    max-width: none;
+  }
 }
 
 .white-key-wrapper {
   position: relative;
+  flex: 1;
 }
 
 .white-key {
-  width: 20px;
+  width: 100%;
   height: 100px;
   border: 1.5px solid #bbb;
   border-top: none;
@@ -268,13 +281,13 @@
 }
 
 .black-key {
-  width: 14px;
+  width: 12px;
   height: 58px;
   background: #333;
   border-radius: 0 0 3px 3px;
   position: absolute;
   top: 0;
-  right: -7px;
+  right: -6px;
   z-index: 2;
   pointer-events: none;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);

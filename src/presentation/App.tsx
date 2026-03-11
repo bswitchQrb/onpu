@@ -59,7 +59,7 @@ export default function App() {
 
   // 不正解時の正解テキスト
   const correctAnswerText = currentNotes
-    .map((n) => `${n.jaName}（${n.name}）`)
+    .map((n) => n.jaName)
     .join("、");
 
   return (
