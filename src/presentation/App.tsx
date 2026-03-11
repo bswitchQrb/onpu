@@ -6,9 +6,12 @@ import { t } from "../i18n";
 import Staff from "./components/Staff";
 import HamburgerMenu from "./components/HamburgerMenu";
 import PianoKeyboard from "./components/PianoKeyboard";
+import RerollButton from "./components/RerollButton";
+import RevealButton from "./components/RevealButton";
+import NextButton from "./components/NextButton";
 import "./App.css";
 
-type AnswerState = "waiting" | "correct" | "wrong";
+type AnswerState = "waiting" | "correct" | "wrong" | "revealed";
 
 export default function App() {
   const [clef, setClef] = useState<ClefType>("gClef-keyboard");
@@ -72,6 +75,7 @@ export default function App() {
 
       <div className="staff-container">
         <Staff notes={currentNotes} clef={getBaseClef(clef)} />
+        <RerollButton onClick={() => nextQuestion()} />
       </div>
 
       <p className="question">
@@ -87,18 +91,20 @@ export default function App() {
         finished={answerState !== "waiting"}
       />
 
+      {answerState === "waiting" && (
+        <RevealButton onClick={() => setAnswerState("revealed")} />
+      )}
+
       {answerState !== "waiting" && (
         <div className="result-area">
           <p className={`result-text ${answerState}`}>
-            {answerState === "correct" ? t("quiz.correct") : t("quiz.wrong")}
+            {answerState === "correct" ? t("quiz.correct") : answerState === "revealed" ? "" : t("quiz.wrong")}
           </p>
           <p className="correct-answer">
-            {answerState === "wrong" ? t("quiz.answerPrefix") : ""}
+            {answerState !== "correct" ? t("quiz.answerPrefix") : ""}
             <strong>{correctAnswerText}</strong>
           </p>
-          <button className="next-btn" onClick={() => nextQuestion()}>
-            {t("quiz.next")}
-          </button>
+          <NextButton onClick={() => nextQuestion()} />
         </div>
       )}
     </div>
