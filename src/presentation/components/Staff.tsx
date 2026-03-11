@@ -1,7 +1,10 @@
-import type { NoteData } from "./notes";
+import type { NoteData } from "../../domain/note";
+import type { ClefType } from "../../domain/clef";
+import ClefSymbol from "./ClefSymbol";
 
 interface StaffProps {
   note: NoteData;
+  clef: ClefType;
 }
 
 const WIDTH = 300;
@@ -9,15 +12,14 @@ const HEIGHT = 200;
 const LINE_SPACING = 16;
 const STAFF_TOP = 50;
 const NOTE_X = 190;
-// 五線の一番下の線のY座標
 const BOTTOM_LINE_Y = STAFF_TOP + 4 * LINE_SPACING;
 
-// position(0=E4の線)からY座標を計算
+// position(0=一番下の線)からY座標を計算
 function noteY(position: number): number {
   return BOTTOM_LINE_Y - position * (LINE_SPACING / 2);
 }
 
-export default function Staff({ note }: StaffProps) {
+export default function Staff({ note, clef }: StaffProps) {
   const ny = noteY(note.position);
   const stemUp = note.position < 4;
   const stemX = stemUp ? NOTE_X + 7 : NOTE_X - 7;
@@ -25,13 +27,11 @@ export default function Staff({ note }: StaffProps) {
 
   // 加線を計算
   const ledgerLines: number[] = [];
-  // 下の加線（position -2, -4, ... は線上）
   if (note.position <= -2) {
     for (let p = -2; p >= note.position; p -= 2) {
       ledgerLines.push(noteY(p));
     }
   }
-  // 上の加線（position 10, 12, ... は線上）
   if (note.position >= 10) {
     for (let p = 10; p <= note.position; p += 2) {
       ledgerLines.push(noteY(p));
@@ -56,8 +56,8 @@ export default function Staff({ note }: StaffProps) {
         />
       ))}
 
-      {/* ト音記号 */}
-      <TrebleClef />
+      {/* 音記号 */}
+      <ClefSymbol clef={clef} staffTop={STAFF_TOP} lineSpacing={LINE_SPACING} />
 
       {/* 加線 */}
       {ledgerLines.map((ly, i) => (
@@ -92,25 +92,5 @@ export default function Staff({ note }: StaffProps) {
         strokeWidth={1.6}
       />
     </svg>
-  );
-}
-
-function TrebleClef() {
-  // ト音記号: ソの線（下から2番目 = STAFF_TOP + 3*LINE_SPACING）を巻く
-  // SVGテキストでUnicode音楽記号を使用
-  // ソの線のY座標
-  const soLineY = STAFF_TOP + 3 * LINE_SPACING;
-
-  return (
-    <text
-      x={68}
-      y={soLineY + 24}
-      fontSize={100}
-      fontFamily="'Noto Music', 'Noto Sans Symbols2', 'Segoe UI Symbol', 'Apple Symbols', serif"
-      fill="#333"
-      textAnchor="middle"
-    >
-      {"\u{1D11E}"}
-    </text>
   );
 }
