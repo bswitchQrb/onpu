@@ -1,0 +1,139 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.app {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px 16px;
+  text-align: center;
+  font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", sans-serif;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.title {
+  font-size: 1.6rem;
+  color: #4a3f8a;
+  margin-bottom: 4px;
+}
+
+.score {
+  font-size: 1.1rem;
+  color: #666;
+  margin-bottom: 12px;
+}
+
+.staff-container {
+  background: #fffef5;
+  border-radius: 16px;
+  padding: 12px 8px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  margin-bottom: 16px;
+  width: 100%;
+}
+
+.question {
+  font-size: 1.2rem;
+  color: #333;
+  margin-bottom: 16px;
+  font-weight: 600;
+}
+
+.choices {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+.choice-btn {
+  padding: 14px 20px;
+  border: 2px solid #b8b0e0;
+  border-radius: 14px;
+  background: #f4f0ff;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #4a3f8a;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  min-width: 90px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.choice-btn:active:not(:disabled) {
+  transform: scale(0.96);
+}
+
+.choice-btn .note-name {
+  font-size: 0.7rem;
+  color: #998ec7;
+  font-weight: 400;
+}
+
+.choice-btn.correct {
+  background: #d4f5d4;
+  border-color: #4caf50;
+  color: #2e7d32;
+}
+
+.choice-btn.wrong {
+  background: #fdd;
+  border-color: #e53935;
+  color: #c62828;
+}
+
+.choice-btn:disabled {
+  cursor: default;
+  opacity: 0.85;
+}
+
+.result-area {
+  margin-top: 4px;
+}
+
+.result-text {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.result-text.correct {
+  color: #4caf50;
+}
+
+.result-text.wrong {
+  color: #e53935;
+}
+
+.correct-answer {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 12px;
+}
+
+.next-btn {
+  padding: 12px 32px;
+  border: none;
+  border-radius: 12px;
+  background: #6c5ce7;
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.next-btn:active {
+  background: #5a4bd1;
+}
