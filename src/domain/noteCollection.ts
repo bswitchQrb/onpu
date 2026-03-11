@@ -1,8 +1,8 @@
 import type { ClefType } from "./clef";
 import type { NoteData } from "./note";
 
-// ト音記号: position 0 = E4（一番下の線）、F3〜C6の19音
-export const TREBLE_NOTES: NoteData[] = [
+// ト音記号（G Clef）: position 0 = E4（一番下の線）、F3〜C6の19音
+export const G_CLEF_NOTES: NoteData[] = [
   { name: "F3", jaName: "ファ", position: -6, ledgerLines: -3 },
   { name: "G3", jaName: "ソ", position: -5, ledgerLines: -2 },
   { name: "A3", jaName: "ラ", position: -4, ledgerLines: -2 },
@@ -24,8 +24,8 @@ export const TREBLE_NOTES: NoteData[] = [
   { name: "C6", jaName: "ド", position: 12, ledgerLines: 2 },
 ];
 
-// ヘ音記号: position 0 = G2（一番下の線）、C2〜G4の19音
-export const BASS_NOTES: NoteData[] = [
+// ヘ音記号（F Clef）: position 0 = G2（一番下の線）、C2〜G4の19音
+export const F_CLEF_NOTES: NoteData[] = [
   { name: "C2", jaName: "ド", position: -4, ledgerLines: -2 },
   { name: "D2", jaName: "レ", position: -3, ledgerLines: -1 },
   { name: "E2", jaName: "ミ", position: -2, ledgerLines: -1 },
@@ -47,18 +47,18 @@ export const BASS_NOTES: NoteData[] = [
   { name: "G4", jaName: "ソ", position: 14, ledgerLines: 3 },
 ];
 
-// ト音記号 鍵盤UI用（出題範囲と同じ A3〜A5）
-export const TREBLE_KEYBOARD_NOTES: NoteData[] = [...TREBLE_NOTES];
+// ト音記号 鍵盤UI用（出題範囲と同じ F3〜C6）
+export const G_CLEF_KEYBOARD_NOTES: NoteData[] = [...G_CLEF_NOTES];
 
-// ヘ音記号 鍵盤UI用（出題範囲と同じ G2〜C4）
-export const BASS_KEYBOARD_NOTES: NoteData[] = [...BASS_NOTES];
+// ヘ音記号 鍵盤UI用（出題範囲と同じ C2〜G4）
+export const F_CLEF_KEYBOARD_NOTES: NoteData[] = [...F_CLEF_NOTES];
 
 import { getBaseClef } from "./clef";
 
 export function getNotesForClef(clef: ClefType): NoteData[] {
-  return getBaseClef(clef) === "bass" ? BASS_NOTES : TREBLE_NOTES;
+  return getBaseClef(clef) === "fClef" ? F_CLEF_NOTES : G_CLEF_NOTES;
 }
 
 export function getKeyboardNotesForClef(clef: ClefType): NoteData[] {
-  return getBaseClef(clef) === "bass" ? BASS_KEYBOARD_NOTES : TREBLE_KEYBOARD_NOTES;
+  return getBaseClef(clef) === "fClef" ? F_CLEF_KEYBOARD_NOTES : G_CLEF_KEYBOARD_NOTES;
 }
