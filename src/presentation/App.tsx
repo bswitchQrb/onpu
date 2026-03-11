@@ -91,11 +91,10 @@ export default function App() {
           <p className={`result-text ${answerState}`}>
             {answerState === "correct" ? "正解！" : "残念..."}
           </p>
-          {answerState === "wrong" && (
-            <p className="correct-answer">
-              答えは <strong>{correctAnswerText}</strong>
-            </p>
-          )}
+          <p className="correct-answer">
+            {answerState === "wrong" ? "答えは " : ""}
+            <strong>{correctAnswerText}</strong>
+          </p>
           <button className="next-btn" onClick={() => nextQuestion()}>
             次の問題
           </button>
