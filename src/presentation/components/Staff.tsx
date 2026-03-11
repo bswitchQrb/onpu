@@ -1,7 +1,8 @@
 import { useRef, useEffect } from "react";
-import { Renderer, Stave, StaveNote, Voice, Formatter } from "vexflow";
+import { Renderer, Stave, StaveNote, Voice, Formatter, Stem } from "vexflow";
 import type { NoteData } from "../../domain/note";
 import type { BaseClefType } from "../../domain/clef";
+import { toVexFlowClef } from "../../domain/clef";
 
 interface StaffProps {
   notes: NoteData[];
@@ -25,6 +26,7 @@ export default function Staff({ notes, clef }: StaffProps) {
     // 前回の描画をクリア
     el.innerHTML = "";
 
+    const vexClef = toVexFlowClef(clef);
     const scale = 1.5;
     const staveWidth = 160;
     const width = staveWidth * scale;
@@ -37,16 +39,20 @@ export default function Staff({ notes, clef }: StaffProps) {
 
     // 五線を描画（上に加線がある場合のスペース確保）
     const stave = new Stave(0, 10, staveWidth);
-    stave.addClef(clef);
+    stave.addClef(vexClef);
     stave.setContext(context);
     stave.draw();
 
     // 音符を作成（和音は keys 配列に複数指定）
     const keys = notes.map((n) => toVexKey(n.name));
+    // B4（第3線）以上なら棒を下向きに
+    const highestPosition = Math.max(...notes.map((n) => n.position));
+    const stemDirection = highestPosition >= 4 ? Stem.DOWN : Stem.UP;
     const staveNote = new StaveNote({
       keys,
       duration: "q",
-      clef,
+      clef: vexClef,
+      stemDirection,
     });
 
     // Voice に追加して描画

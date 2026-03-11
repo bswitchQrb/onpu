@@ -2,16 +2,20 @@ import { useState, useCallback } from "react";
 import { type ClefType, getBaseClef, isChordMode } from "../domain/clef";
 import type { NoteData } from "../domain/note";
 import { pickRandomNote, pickRandomChord } from "../application/quizService";
+import { t } from "../i18n";
 import Staff from "./components/Staff";
 import HamburgerMenu from "./components/HamburgerMenu";
 import PianoKeyboard from "./components/PianoKeyboard";
+import RerollButton from "./components/RerollButton";
+import RevealButton from "./components/RevealButton";
+import NextButton from "./components/NextButton";
 import "./App.css";
 
-type AnswerState = "waiting" | "correct" | "wrong";
+type AnswerState = "waiting" | "correct" | "wrong" | "revealed";
 
 export default function App() {
-  const [clef, setClef] = useState<ClefType>("treble-keyboard");
-  const [currentNotes, setCurrentNotes] = useState<NoteData[]>(() => [pickRandomNote("treble-keyboard")]);
+  const [clef, setClef] = useState<ClefType>("gClef-keyboard");
+  const [currentNotes, setCurrentNotes] = useState<NoteData[]>(() => [pickRandomNote("gClef-keyboard")]);
   const [answerState, setAnswerState] = useState<AnswerState>("waiting");
 
   // 鍵盤モード用: 正解済みのjaName、間違えたname
@@ -57,24 +61,25 @@ export default function App() {
     }
   };
 
-  // 不正解時の正解テキスト
+  // 正解テキスト（正解・不正解どちらでも表示）
   const correctAnswerText = currentNotes
-    .map((n) => `${n.jaName}（${n.name}）`)
+    .map((n) => n.jaName)
     .join("、");
 
   return (
     <div className="app">
       <div className="header">
-        <h1 className="title">おんぷクイズ</h1>
+        <h1 className="title">{t("app.title")}</h1>
         <HamburgerMenu currentClef={clef} onClefChange={handleClefChange} />
       </div>
 
       <div className="staff-container">
         <Staff notes={currentNotes} clef={getBaseClef(clef)} />
+        <RerollButton onClick={() => nextQuestion()} />
       </div>
 
       <p className="question">
-        {isChordMode(clef) ? "この和音は何？" : "この音符は何？"}
+        {isChordMode(clef) ? t("quiz.questionChord") : t("quiz.questionNote")}
       </p>
 
       <PianoKeyboard
@@ -86,19 +91,20 @@ export default function App() {
         finished={answerState !== "waiting"}
       />
 
+      {answerState === "waiting" && (
+        <RevealButton onClick={() => setAnswerState("revealed")} />
+      )}
+
       {answerState !== "waiting" && (
         <div className="result-area">
           <p className={`result-text ${answerState}`}>
-            {answerState === "correct" ? "正解！" : "残念..."}
+            {answerState === "correct" ? t("quiz.correct") : answerState === "revealed" ? "" : t("quiz.wrong")}
           </p>
-          {answerState === "wrong" && (
-            <p className="correct-answer">
-              答えは <strong>{correctAnswerText}</strong>
-            </p>
-          )}
-          <button className="next-btn" onClick={() => nextQuestion()}>
-            次の問題
-          </button>
+          <p className="correct-answer">
+            {answerState !== "correct" ? t("quiz.answerPrefix") : ""}
+            <strong>{correctAnswerText}</strong>
+          </p>
+          <NextButton onClick={() => nextQuestion()} />
         </div>
       )}
     </div>
