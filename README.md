@@ -1,77 +1,79 @@
 # おんぷクイズ
 
-https://bswitchqrb.github.io/onpu/
+五線譜に表示された音符を、ピアノ鍵盤UIから回答する音楽クイズアプリです。
 
-# React + TypeScript + Vite
+**デモ**: https://bswitchqrb.github.io/onpu/
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 機能
 
-Currently, two official plugins are available:
+- **ト音記号（鍵盤）モード**: 五線譜に表示された1つの音符を鍵盤から回答
+- **ト音記号（3音）モード**: 3音の和音を鍵盤から回答
+- **ヘ音記号（鍵盤）モード**: ヘ音記号の音符を鍵盤から回答
+- **ヘ音記号（3音）モード**: ヘ音記号の3音和音を鍵盤から回答
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### 音域
 
-## React Compiler
+| 記号 | 範囲 | 音数 |
+|------|------|------|
+| ト音記号（G Clef） | F3〜C6 | 19音 |
+| ヘ音記号（F Clef） | C2〜G4 | 19音 |
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 使い方
 
-## Expanding the ESLint configuration
+1. アプリを開くと、五線譜に音符が表示されます
+2. 下部のピアノ鍵盤から正解の音をタップします
+3. 和音モードでは、構成音をすべてタップすると正解になります（同じ音名は1回でOK）
+4. 右上のハンバーガーメニューからモードを切り替えられます
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 技術スタック
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- **React 19** + **TypeScript 5.9**
+- **Vite 7.3**（ビルドツール）
+- **VexFlow 5**（五線譜の描画）
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## ディレクトリ構成
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+src/
+├── main.tsx                     # エントリーポイント
+├── index.css                    # グローバルスタイル
+├── domain/                      # ドメイン層（ビジネスロジック・型定義）
+│   ├── clef.ts                  # 音部記号の型（G Clef / F Clef）
+│   ├── note.ts                  # 音符データの型定義（NoteData）
+│   └── noteCollection.ts       # 音符データの定義（音域・鍵盤用データ）
+├── application/                 # アプリケーション層（ユースケース）
+│   └── quizService.ts          # クイズのロジック（出題・シャッフル）
+├── presentation/                # プレゼンテーション層（UI）
+│   ├── App.tsx                  # メインコンポーネント
+│   ├── App.css                  # アプリ全体のスタイル
+│   └── components/
+│       ├── Staff.tsx            # 五線譜コンポーネント（VexFlow）
+│       ├── PianoKeyboard.tsx    # ピアノ鍵盤コンポーネント
+│       └── HamburgerMenu.tsx   # モード切替メニュー
+└── i18n/                        # 国際化（i18n）
+    ├── index.ts                 # 翻訳関数（t, tClef）
+    └── ja.json                  # 日本語テキスト定義
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### アーキテクチャ（クリーンアーキテクチャ）
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- **domain/**: 音楽理論に基づくドメインモデル。UIやフレームワークに依存しない
+- **application/**: ドメインを使ったユースケース（クイズ出題ロジック）
+- **presentation/**: React コンポーネントとスタイル
+- **i18n/**: 表示テキストの一元管理
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## 開発
+
+```bash
+# 依存関係のインストール
+npm install
+
+# 開発サーバーの起動
+npm run dev
+
+# 型チェック + ビルド
+npm run build
+
+# リント
+npm run lint
 ```

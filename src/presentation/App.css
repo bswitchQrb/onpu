@@ -115,59 +115,6 @@
   font-weight: 600;
 }
 
-.choices {
-  display: flex;
-  gap: 12px;
-  justify-content: center;
-  flex-wrap: wrap;
-  margin-bottom: 20px;
-}
-
-.choice-btn {
-  padding: 14px 20px;
-  border: 2px solid #b8b0e0;
-  border-radius: 14px;
-  background: #f4f0ff;
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: #4a3f8a;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  min-width: 90px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.choice-btn:active:not(:disabled) {
-  transform: scale(0.96);
-}
-
-.choice-btn .note-name {
-  font-size: 0.7rem;
-  color: #998ec7;
-  font-weight: 400;
-}
-
-.choice-btn.correct {
-  background: #d4f5d4;
-  border-color: #4caf50;
-  color: #2e7d32;
-}
-
-.choice-btn.wrong {
-  background: #fdd;
-  border-color: #e53935;
-  color: #c62828;
-}
-
-.choice-btn:disabled {
-  cursor: default;
-  opacity: 0.85;
-}
-
 .result-area {
   margin-top: 4px;
 }
@@ -274,10 +221,6 @@
 .white-key.wrong {
   background: #fdd;
   border-color: #e53935;
-}
-
-.white-key.wrong .key-label {
-  color: #c62828;
 }
 
 .black-key {
