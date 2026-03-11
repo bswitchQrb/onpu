@@ -7,6 +7,22 @@ export function pickRandomNote(clef: ClefType): NoteData {
   return notes[Math.floor(Math.random() * notes.length)];
 }
 
+// 和音用: 異なるjaNameの音符を3つランダムに選ぶ
+export function pickRandomChord(clef: ClefType): NoteData[] {
+  const notes = getNotesForClef(clef);
+  const shuffled = [...notes].sort(() => Math.random() - 0.5);
+  const picked: NoteData[] = [];
+  const usedJaNames = new Set<string>();
+  for (const n of shuffled) {
+    if (!usedJaNames.has(n.jaName)) {
+      picked.push(n);
+      usedJaNames.add(n.jaName);
+      if (picked.length === 3) break;
+    }
+  }
+  return picked.sort((a, b) => a.position - b.position);
+}
+
 // 選択肢を生成（正解1つ + 不正解2つ、同じ音階名は出さない）
 export function generateChoices(correct: NoteData, clef: ClefType): NoteData[] {
   const notes = getNotesForClef(clef);

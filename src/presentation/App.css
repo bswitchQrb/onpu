@@ -208,3 +208,74 @@
 .next-btn:active {
   background: #5a4bd1;
 }
+
+/* ピアノ鍵盤 */
+.piano-keyboard {
+  margin-bottom: 20px;
+  width: 100%;
+  overflow-x: auto;
+  display: flex;
+  justify-content: center;
+}
+
+.piano-keys {
+  display: flex;
+  position: relative;
+}
+
+.white-key-wrapper {
+  position: relative;
+}
+
+.white-key {
+  width: 20px;
+  height: 100px;
+  border: 1.5px solid #bbb;
+  border-top: none;
+  border-radius: 0 0 5px 5px;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  padding-bottom: 6px;
+  gap: 1px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s;
+}
+
+.white-key:active:not(:disabled) {
+  background: #e8e4f0;
+}
+
+.white-key:disabled {
+  cursor: default;
+}
+
+.white-key.correct {
+  background: #d4f5d4;
+  border-color: #4caf50;
+}
+
+.white-key.wrong {
+  background: #fdd;
+  border-color: #e53935;
+}
+
+.white-key.wrong .key-label {
+  color: #c62828;
+}
+
+.black-key {
+  width: 14px;
+  height: 58px;
+  background: #333;
+  border-radius: 0 0 3px 3px;
+  position: absolute;
+  top: 0;
+  right: -7px;
+  z-index: 2;
+  pointer-events: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
