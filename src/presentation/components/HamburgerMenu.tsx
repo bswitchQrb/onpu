@@ -1,13 +1,12 @@
 import { useState, useRef, useEffect } from "react";
 import type { ClefType } from "../../domain/clef";
-import { CLEF_CONFIGS } from "../../domain/clef";
+import { CLEF_OPTIONS } from "../../domain/clef";
+import { t, tClef } from "../../i18n";
 
 interface HamburgerMenuProps {
   currentClef: ClefType;
   onClefChange: (clef: ClefType) => void;
 }
-
-const CLEF_OPTIONS: ClefType[] = ["treble-keyboard", "treble-chord", "bass-keyboard", "bass-chord"];
 
 export default function HamburgerMenu({ currentClef, onClefChange }: HamburgerMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -35,9 +34,9 @@ export default function HamburgerMenu({ currentClef, onClefChange }: HamburgerMe
   return (
     <div className="hamburger-menu" ref={menuRef}>
       <button
-        className="hamburger-btn"
+        className={`hamburger-btn${isOpen ? " open" : ""}`}
         onClick={() => setIsOpen((v) => !v)}
-        aria-label="メニュー"
+        aria-label={t("menu.ariaLabel")}
       >
         <span className="hamburger-icon" />
         <span className="hamburger-icon" />
@@ -52,7 +51,7 @@ export default function HamburgerMenu({ currentClef, onClefChange }: HamburgerMe
               className={`dropdown-item${clef === currentClef ? " active" : ""}`}
               onClick={() => handleSelect(clef)}
             >
-              {CLEF_CONFIGS[clef].label}
+              {tClef(clef)}
             </button>
           ))}
         </div>
