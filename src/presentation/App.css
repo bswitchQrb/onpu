@@ -355,3 +355,342 @@
   background: #c62828;
   box-shadow: 0 2px 4px rgba(198, 40, 40, 0.4);
 }
+
+/* ユーザーボタン（ログイン/ニックネーム） */
+.user-btn {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 4px 10px;
+  border: 1.5px solid #b8b0e0;
+  border-radius: 8px;
+  background: none;
+  font-size: 0.75rem;
+  color: #5a5080;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  max-width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.user-btn:active {
+  background: rgba(108, 92, 231, 0.08);
+}
+
+.user-btn.login {
+  color: #6c5ce7;
+  border-color: #6c5ce7;
+}
+
+/* 認証モーダル */
+.auth-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 20px;
+}
+
+.auth-modal {
+  background: #fff;
+  border-radius: 16px;
+  padding: 28px 24px;
+  width: 100%;
+  max-width: 340px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+/* 認証フォーム */
+.auth-form {
+  width: 100%;
+  max-width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.auth-heading {
+  font-size: 1.2rem;
+  color: #4a3f8a;
+  text-align: center;
+  margin-bottom: 4px;
+}
+
+.auth-input {
+  padding: 12px 14px;
+  border: 1.5px solid #d0cce0;
+  border-radius: 10px;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.15s;
+  font-family: inherit;
+}
+
+.auth-input:focus {
+  border-color: #6c5ce7;
+}
+
+.auth-submit {
+  padding: 12px;
+  border: none;
+  border-radius: 12px;
+  background: #6c5ce7;
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  margin-top: 4px;
+}
+
+.auth-submit:active {
+  background: #5a4bd1;
+}
+
+.auth-submit:disabled {
+  background: #b8b0e0;
+  cursor: default;
+}
+
+.auth-toggle {
+  background: none;
+  border: none;
+  color: #6c5ce7;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-decoration: underline;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.auth-error {
+  color: #e53935;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.auth-message {
+  color: #4caf50;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+/* 成績モーダル */
+.stats-modal {
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px 20px;
+  width: 100%;
+  max-width: 360px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stats-loading {
+  color: #b8b0e0;
+  padding: 20px 0;
+}
+
+.stats-total {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.stats-total-rate {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #4a3f8a;
+}
+
+.stats-total-count {
+  font-size: 0.85rem;
+  color: #888;
+}
+
+.stats-mode {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.stats-mode-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 4px;
+}
+
+.stats-mode-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #4a3f8a;
+}
+
+.stats-mode-rate {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #333;
+}
+
+.stats-mode-count {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: #999;
+}
+
+.stats-bar {
+  height: 8px;
+  background: #eee;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.stats-bar-fill {
+  height: 100%;
+  background: #6c5ce7;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.stats-weak {
+  margin-top: 4px;
+  font-size: 0.75rem;
+  color: #888;
+}
+
+.stats-weak-label {
+  color: #e53935;
+  font-weight: 600;
+  margin-right: 4px;
+}
+
+.stats-weak-item {
+  margin-right: 6px;
+}
+
+.stats-empty {
+  color: #999;
+  font-size: 0.9rem;
+  padding: 16px 0;
+}
+
+/* API接続エラーバナー */
+.api-error-banner {
+  width: 100%;
+  padding: 8px 12px;
+  background: #fff3e0;
+  border: 1px solid #ffb74d;
+  border-radius: 8px;
+  color: #e65100;
+  font-size: 0.8rem;
+  text-align: center;
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+
+/* 弱点克服バッジ */
+.weak-point-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #e53935;
+  background: #fef0f0;
+  border: 1px solid #e5a0a0;
+  border-radius: 6px;
+  padding: 2px 10px;
+  margin-bottom: 8px;
+}
+
+/* 弱点克服トグル */
+.dropdown-item.weak-point-toggle {
+  border-top: 1.5px solid rgba(184, 176, 224, 0.4);
+  font-size: 0.85rem;
+}
+
+/* 回答履歴 */
+.history-list {
+  width: 100%;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.history-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 4px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.history-icon {
+  font-size: 1.1rem;
+  font-weight: 700;
+  width: 20px;
+  text-align: center;
+}
+
+.history-item.correct .history-icon {
+  color: #4caf50;
+}
+
+.history-item.wrong .history-icon {
+  color: #e53935;
+}
+
+.history-detail {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.history-question {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.history-mode {
+  font-size: 0.7rem;
+  color: #999;
+}
+
+.history-time {
+  font-size: 0.7rem;
+  color: #bbb;
+}
+
+/* 成績タブ */
+.stats-tabs {
+  display: flex;
+  width: 100%;
+  margin-bottom: 16px;
+  border-bottom: 2px solid #eee;
+}
+
+.stats-tab {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  background: none;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #999;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 0.15s;
+}
+
+.stats-tab.active {
+  color: #6c5ce7;
+  border-bottom: 2px solid #6c5ce7;
+  margin-bottom: -2px;
+}
