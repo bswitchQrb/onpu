@@ -6,9 +6,18 @@ import { t, tClef } from "../../i18n";
 interface HamburgerMenuProps {
   currentClef: ClefType;
   onClefChange: (clef: ClefType) => void;
+  weakPointMode: boolean;
+  onWeakPointToggle: (enabled: boolean) => void;
+  isLoggedIn: boolean;
 }
 
-export default function HamburgerMenu({ currentClef, onClefChange }: HamburgerMenuProps) {
+export default function HamburgerMenu({
+  currentClef,
+  onClefChange,
+  weakPointMode,
+  onWeakPointToggle,
+  isLoggedIn,
+}: HamburgerMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -54,6 +63,14 @@ export default function HamburgerMenu({ currentClef, onClefChange }: HamburgerMe
               {tClef(clef)}
             </button>
           ))}
+          {isLoggedIn && (
+            <button
+              className={`dropdown-item weak-point-toggle${weakPointMode ? " active" : ""}`}
+              onClick={() => { onWeakPointToggle(!weakPointMode); setIsOpen(false); }}
+            >
+              {weakPointMode ? "🔥 弱点克服 ON" : "弱点克服"}
+            </button>
+          )}
         </div>
       )}
     </div>
