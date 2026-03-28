@@ -1,4 +1,4 @@
-export type ClefType = "gClef-keyboard" | "gClef-chord" | "fClef-keyboard" | "fClef-chord";
+export type ClefType = "gClef-keyboard" | "gClef-chord" | "fClef-keyboard" | "fClef-chord" | "chord-name";
 
 export type BaseClefType = "gClef" | "fClef";
 
@@ -13,6 +13,10 @@ export function isChordMode(clef: ClefType): boolean {
   return clef.endsWith("-chord");
 }
 
+export function isChordNameMode(clef: ClefType): boolean {
+  return clef === "chord-name";
+}
+
 /** ドメインの BaseClefType を VexFlow の音部記号名に変換 */
 export function toVexFlowClef(clef: BaseClefType): VexFlowClef {
   return clef === "fClef" ? "bass" : "treble";
@@ -24,4 +28,5 @@ export const CLEF_OPTIONS: ClefType[] = [
   "gClef-chord",
   "fClef-keyboard",
   "fClef-chord",
+  "chord-name",
 ];
