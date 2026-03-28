@@ -1,5 +1,7 @@
 import type { ClefType } from "../domain/clef";
 import type { NoteData } from "../domain/note";
+import type { ChordDefinition } from "../domain/chord";
+import { CHORD_DEFINITIONS } from "../domain/chord";
 import { getNotesForClef } from "../domain/noteCollection";
 
 function shuffle<T>(arr: T[]): T[] {
@@ -20,4 +22,9 @@ export function pickRandomNote(clef: ClefType): NoteData {
 export function pickRandomChord(clef: ClefType): NoteData[] {
   const picked = shuffle(getNotesForClef(clef)).slice(0, 3);
   return picked.sort((a, b) => a.position - b.position);
+}
+
+// コード名モード用: ランダムにコードを選ぶ
+export function pickRandomChordName(): ChordDefinition {
+  return CHORD_DEFINITIONS[Math.floor(Math.random() * CHORD_DEFINITIONS.length)];
 }

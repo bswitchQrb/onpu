@@ -1,4 +1,5 @@
 import type { ClefType } from "./clef";
+import { getBaseClef } from "./clef";
 import type { NoteData } from "./note";
 
 // ト音記号（G Clef）: position 0 = E4（一番下の線）、F3〜C6の19音
@@ -53,12 +54,40 @@ export const G_CLEF_KEYBOARD_NOTES: NoteData[] = [...G_CLEF_NOTES];
 // ヘ音記号 鍵盤UI用（出題範囲と同じ C2〜G4）
 export const F_CLEF_KEYBOARD_NOTES: NoteData[] = [...F_CLEF_NOTES];
 
-import { getBaseClef } from "./clef";
+// コードモード鍵盤UI用（C4〜C6の2オクターブ、黒鍵含む25キー）
+export const CHORD_KEYBOARD_NOTES: NoteData[] = [
+  { name: "C4", jaName: "ド", position: 0 },
+  { name: "C#4", jaName: "ド#", position: 0, isBlack: true },
+  { name: "D4", jaName: "レ", position: 0 },
+  { name: "D#4", jaName: "レ#", position: 0, isBlack: true },
+  { name: "E4", jaName: "ミ", position: 0 },
+  { name: "F4", jaName: "ファ", position: 0 },
+  { name: "F#4", jaName: "ファ#", position: 0, isBlack: true },
+  { name: "G4", jaName: "ソ", position: 0 },
+  { name: "G#4", jaName: "ソ#", position: 0, isBlack: true },
+  { name: "A4", jaName: "ラ", position: 0 },
+  { name: "A#4", jaName: "シ♭", position: 0, isBlack: true },
+  { name: "B4", jaName: "シ", position: 0 },
+  { name: "C5", jaName: "ド", position: 0 },
+  { name: "C#5", jaName: "ド#", position: 0, isBlack: true },
+  { name: "D5", jaName: "レ", position: 0 },
+  { name: "D#5", jaName: "レ#", position: 0, isBlack: true },
+  { name: "E5", jaName: "ミ", position: 0 },
+  { name: "F5", jaName: "ファ", position: 0 },
+  { name: "F#5", jaName: "ファ#", position: 0, isBlack: true },
+  { name: "G5", jaName: "ソ", position: 0 },
+  { name: "G#5", jaName: "ソ#", position: 0, isBlack: true },
+  { name: "A5", jaName: "ラ", position: 0 },
+  { name: "A#5", jaName: "シ♭", position: 0, isBlack: true },
+  { name: "B5", jaName: "シ", position: 0 },
+  { name: "C6", jaName: "ド", position: 0 },
+];
 
 export function getNotesForClef(clef: ClefType): NoteData[] {
   return getBaseClef(clef) === "fClef" ? F_CLEF_NOTES : G_CLEF_NOTES;
 }
 
 export function getKeyboardNotesForClef(clef: ClefType): NoteData[] {
+  if (clef === "chord-name") return CHORD_KEYBOARD_NOTES;
   return getBaseClef(clef) === "fClef" ? F_CLEF_KEYBOARD_NOTES : G_CLEF_KEYBOARD_NOTES;
 }

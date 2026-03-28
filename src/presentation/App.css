@@ -304,6 +304,18 @@
   border-color: #e53935;
 }
 
+/* コード名表示 */
+.chord-name-display {
+  font-size: 3.5rem;
+  font-weight: 700;
+  color: #4a3f8a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 120px;
+  padding: 16px 0;
+}
+
 .black-key {
   width: 12px;
   height: 58px;
@@ -315,4 +327,31 @@
   z-index: 2;
   pointer-events: none;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.black-key.interactive {
+  pointer-events: auto;
+  cursor: pointer;
+  border: none;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s;
+}
+
+.black-key.interactive:active:not(:disabled) {
+  background: #555;
+}
+
+.black-key.interactive:disabled {
+  cursor: default;
+}
+
+.black-key.interactive.correct {
+  background: #2e7d32;
+  box-shadow: 0 2px 4px rgba(46, 125, 50, 0.4);
+}
+
+.black-key.interactive.wrong {
+  background: #c62828;
+  box-shadow: 0 2px 4px rgba(198, 40, 40, 0.4);
 }
