@@ -2,9 +2,14 @@ import { useState, useCallback, useMemo } from "react";
 import { type ClefType, getBaseClef, isChordMode, isChordNameMode } from "../domain/clef";
 import type { NoteData } from "../domain/note";
 import type { ChordDefinition } from "../domain/chord";
-import { pickRandomNote, pickRandomChord, pickRandomChordName } from "../application/quizService";
+import { pickRandomNote, pickRandomChord, pickRandomChordName, findChordBySymbol, getAllQuestionLabels } from "../application/quizService";
+import { getNotesForClef } from "../domain/noteCollection";
 import { getKeyboardNotesForClef } from "../domain/noteCollection";
+import { recordAnswer } from "../infrastructure/answerApi";
+import { fetchWeightedQuestion } from "../infrastructure/questionApi";
+import { getToken } from "../infrastructure/apiClient";
 import { t } from "../i18n";
+import { useAuth } from "./AuthContext";
 import Staff from "./components/Staff";
 import ChordNameDisplay from "./components/ChordNameDisplay";
 import HamburgerMenu from "./components/HamburgerMenu";
@@ -12,11 +17,23 @@ import PianoKeyboard from "./components/PianoKeyboard";
 import RerollButton from "./components/RerollButton";
 import RevealButton from "./components/RevealButton";
 import NextButton from "./components/NextButton";
+import AuthPage from "./components/AuthPage";
+import StatsPage from "./components/StatsPage";
 import "./App.css";
 
 type AnswerState = "waiting" | "correct" | "wrong" | "revealed";
 
+// 出題内容を文字列で取得（API記録用）
+function getQuestionLabel(clef: ClefType, notes: NoteData[], chord: ChordDefinition | null): string {
+  if (isChordNameMode(clef) && chord) return chord.symbol;
+  return notes.map((n) => n.name).join(",");
+}
+
 export default function App() {
+  const { user, logout, apiError, clearApiError } = useAuth();
+  const [showAuth, setShowAuth] = useState(false);
+  const [showStats, setShowStats] = useState(false);
+  const [weakPointMode, setWeakPointMode] = useState(false);
   const [clef, setClef] = useState<ClefType>("gClef-keyboard");
   const [currentNotes, setCurrentNotes] = useState<NoteData[]>(() => [pickRandomNote("gClef-keyboard")]);
   const [currentChord, setCurrentChord] = useState<ChordDefinition | null>(null);
@@ -27,24 +44,75 @@ export default function App() {
   const [answeredJaNamesForChord, setAnsweredJaNamesForChord] = useState<Set<string>>(new Set());
   const [wrongName, setWrongName] = useState<string | null>(null);
 
+  // 通常出題（ローカルランダム）
+  const pickLocal = useCallback((c: ClefType) => {
+    if (isChordNameMode(c)) {
+      setCurrentChord(pickRandomChordName());
+      setCurrentNotes([]);
+    } else if (isChordMode(c)) {
+      setCurrentChord(null);
+      setCurrentNotes(pickRandomChord(c));
+    } else {
+      setCurrentChord(null);
+      setCurrentNotes([pickRandomNote(c)]);
+    }
+  }, []);
+
+  // 弱点克服出題（APIから重み付き）
+  const pickWeighted = useCallback(async (c: ClefType) => {
+    try {
+      // 和音モードは単音ベースで弱点を取得し、それを含む3音を出題
+      const queryMode = isChordMode(c) ? c.replace("-chord", "-keyboard") : c;
+      const label = await fetchWeightedQuestion(queryMode, getAllQuestionLabels(queryMode as ClefType));
+
+      if (isChordNameMode(c)) {
+        const chord = findChordBySymbol(label);
+        if (chord) {
+          setCurrentChord(chord);
+          setCurrentNotes([]);
+          return;
+        }
+      } else if (isChordMode(c)) {
+        // 和音モード: 苦手な音を必ず含む3音を出題
+        const allNotes = getNotesForClef(c);
+        const weakNote = allNotes.find((n) => n.name === label);
+        if (weakNote) {
+          const others = allNotes.filter((n) => n.name !== label).sort(() => Math.random() - 0.5).slice(0, 2);
+          const picked = [weakNote, ...others].sort((a, b) => a.position - b.position);
+          setCurrentChord(null);
+          setCurrentNotes(picked);
+          return;
+        }
+      } else {
+        // 単音モード: label は "C4" などの note.name
+        const allNotes = getNotesForClef(c);
+        const note = allNotes.find((n) => n.name === label);
+        if (note) {
+          setCurrentChord(null);
+          setCurrentNotes([note]);
+          return;
+        }
+      }
+    } catch {
+      // API失敗時はローカルにフォールバック
+    }
+    pickLocal(c);
+  }, [pickLocal]);
+
   const nextQuestion = useCallback(
     (c: ClefType = clef) => {
-      if (isChordNameMode(c)) {
-        setCurrentChord(pickRandomChordName());
-        setCurrentNotes([]);
-      } else if (isChordMode(c)) {
-        setCurrentChord(null);
-        setCurrentNotes(pickRandomChord(c));
-      } else {
-        setCurrentChord(null);
-        setCurrentNotes([pickRandomNote(c)]);
-      }
       setAnswerState("waiting");
       setAnsweredNames(new Set());
       setAnsweredJaNamesForChord(new Set());
       setWrongName(null);
+
+      if (weakPointMode && getToken()) {
+        pickWeighted(c);
+      } else {
+        pickLocal(c);
+      }
     },
-    [clef]
+    [clef, weakPointMode, pickLocal, pickWeighted]
   );
 
   const handleClefChange = (newClef: ClefType) => {
@@ -81,16 +149,19 @@ export default function App() {
         setAnsweredJaNamesForChord(nextJa);
         if (nextJa.size === correctJaNames.size) {
           setAnswerState("correct");
+          if (getToken()) recordAnswer(clef, getQuestionLabel(clef, currentNotes, currentChord), true).catch(() => {});
         }
       } else {
         // おんぷモード: ユニークなjaName全部当てた？
         if (next.size === correctJaNames.size) {
           setAnswerState("correct");
+          if (getToken()) recordAnswer(clef, getQuestionLabel(clef, currentNotes, currentChord), true).catch(() => {});
         }
       }
     } else if (!answeredNames.has(answerKey)) {
       setWrongName(note.name);
       setAnswerState("wrong");
+      if (getToken()) recordAnswer(clef, getQuestionLabel(clef, currentNotes, currentChord), false).catch(() => {});
     }
   };
 
@@ -128,9 +199,33 @@ export default function App() {
   return (
     <div className="app">
       <div className="header">
+        {user ? (
+          <button className="user-btn" onClick={() => setShowStats(true)} title="成績を見る">
+            {user.nickname}
+          </button>
+        ) : (
+          <button className="user-btn login" onClick={() => setShowAuth(true)}>
+            ログイン
+          </button>
+        )}
         <h1 className="title">{t("app.title")}</h1>
-        <HamburgerMenu currentClef={clef} onClefChange={handleClefChange} />
+        <HamburgerMenu
+          currentClef={clef}
+          onClefChange={handleClefChange}
+          weakPointMode={weakPointMode}
+          onWeakPointToggle={setWeakPointMode}
+          isLoggedIn={!!user}
+        />
       </div>
+
+      {showAuth && <AuthPage onClose={() => setShowAuth(false)} />}
+      {showStats && <StatsPage onClose={() => setShowStats(false)} onLogout={() => { setShowStats(false); logout(); }} />}
+
+      {apiError && (
+        <div className="api-error-banner" onClick={clearApiError}>
+          {apiError}（タップで閉じる）
+        </div>
+      )}
 
       <div className="staff-container">
         {isChordNameMode(clef) && currentChord ? (
@@ -140,6 +235,8 @@ export default function App() {
         )}
         <RerollButton onClick={() => nextQuestion()} />
       </div>
+
+      {weakPointMode && <p className="weak-point-badge">弱点克服モード</p>}
 
       <p className="question">{questionText}</p>
 

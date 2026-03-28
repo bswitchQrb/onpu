@@ -1,4 +1,4 @@
-import type { ClefType } from "../domain/clef";
+import { type ClefType, isChordMode, isChordNameMode } from "../domain/clef";
 import type { NoteData } from "../domain/note";
 import type { ChordDefinition } from "../domain/chord";
 import { CHORD_DEFINITIONS } from "../domain/chord";
@@ -27,4 +27,18 @@ export function pickRandomChord(clef: ClefType): NoteData[] {
 // コード名モード用: ランダムにコードを選ぶ
 export function pickRandomChordName(): ChordDefinition {
   return CHORD_DEFINITIONS[Math.floor(Math.random() * CHORD_DEFINITIONS.length)];
+}
+
+// コード名モード用: シンボルからChordDefinitionを取得
+export function findChordBySymbol(symbol: string): ChordDefinition | undefined {
+  return CHORD_DEFINITIONS.find((c) => c.symbol === symbol);
+}
+
+// 弱点克服モード用: 全問題ラベル一覧を取得
+export function getAllQuestionLabels(clef: ClefType): string[] {
+  if (isChordNameMode(clef)) {
+    return CHORD_DEFINITIONS.map((c) => c.symbol);
+  }
+  // 単音・和音モードは音名
+  return getNotesForClef(clef).map((n) => n.name);
 }
