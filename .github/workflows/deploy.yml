@@ -1,51 +1,50 @@
-# 静的コンテンツを GitHub Pages にデプロイするためのシンプルなワークフロー
-name: Deploy static content to Pages
+# GitHub Pages → Render へのリダイレクト
+name: Deploy redirect to Pages
 
 on:
-  # 対象ブランチプッシュ時に実行されます
   push:
-    branches: ['main'] 
-
-  # Actions タブから手動でワークフローを実行できるようにします
+    branches: ['main']
   workflow_dispatch:
 
-# GITHUB_TOKEN のパーミッションを設定し、GitHub Pages へのデプロイを許可します
 permissions:
   contents: read
   pages: write
   id-token: write
 
-# 1 つの同時デプロイメントを可能にする
 concurrency:
   group: 'pages'
   cancel-in-progress: true
 
 jobs:
-  # デプロイするだけなので、単一のデプロイジョブ
   deploy:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Set up Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'npm'
-      - name: Install dependencies
-        run: npm ci
-      - name: Build
-        run: npm run build
+      - name: Create redirect page
+        run: |
+          mkdir -p redirect/onpu
+          cat > redirect/onpu/index.html << 'HTML'
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <meta charset="utf-8">
+            <meta http-equiv="refresh" content="0; url=https://onpu.onrender.com/onpu/">
+            <link rel="canonical" href="https://onpu.onrender.com/onpu/">
+            <title>おんぷクイズ - リダイレクト中</title>
+          </head>
+          <body>
+            <p><a href="https://onpu.onrender.com/onpu/">おんぷクイズへ移動します...</a></p>
+          </body>
+          </html>
+          HTML
       - name: Setup Pages
         uses: actions/configure-pages@v4
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # dist フォルダーのアップロード
-          path: './dist'
+          path: './redirect'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
