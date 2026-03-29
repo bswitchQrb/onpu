@@ -22,7 +22,8 @@ export async function apiFetch<T>(path: string, options: RequestInit = {}): Prom
     headers["Authorization"] = `Bearer ${token}`;
   }
 
-  const res = await fetch(path, { ...options, headers });
+  const apiBase = import.meta.env.VITE_API_BASE_URL ?? "";
+  const res = await fetch(`${apiBase}${path}`, { ...options, headers });
 
   if (!res.ok) {
     const body = await res.json().catch(() => ({ error: "エラーが発生しました" }));
