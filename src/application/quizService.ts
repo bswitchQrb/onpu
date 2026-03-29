@@ -1,4 +1,4 @@
-import { type ClefType, isChordMode, isChordNameMode } from "../domain/clef";
+import { type ClefType, isChordNameMode } from "../domain/clef";
 import type { NoteData } from "../domain/note";
 import type { ChordDefinition } from "../domain/chord";
 import { CHORD_DEFINITIONS } from "../domain/chord";
