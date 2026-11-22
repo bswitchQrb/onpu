@@ -30,12 +30,12 @@ jobs:
           <html>
           <head>
             <meta charset="utf-8">
-            <meta http-equiv="refresh" content="0; url=https://onpu.onrender.com/onpu/">
-            <link rel="canonical" href="https://onpu.onrender.com/onpu/">
+            <meta http-equiv="refresh" content="0; url=https://bee2.dev/onpu/">
+            <link rel="canonical" href="https://bee2.dev/onpu/">
             <title>おんぷクイズ - リダイレクト中</title>
           </head>
           <body>
-            <p><a href="https://onpu.onrender.com/onpu/">おんぷクイズへ移動します...</a></p>
+            <p><a href="https://bee2.dev/onpu/">おんぷクイズへ移動します...</a></p>
           </body>
           </html>
           HTML
