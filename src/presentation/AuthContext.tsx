@@ -31,10 +31,45 @@ export function useAuth() {
   return useContext(AuthContext);
 }
 
+/** /me の確認結果。state の更新は呼び出し側でまとめて行う */
+type MeResult =
+  | { kind: "ok"; user: AuthUser }
+  | { kind: "networkError" }
+  | { kind: "unauthorized" };
+
+async function loadMe(): Promise<MeResult> {
+  try {
+    const me = await fetchMe();
+    return { kind: "ok", user: { id: me.id, loginId: me.loginId, nickname: me.nickname } };
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : "";
+    if (msg.includes("Failed to fetch") || msg.includes("NetworkError")) {
+      // サーバー接続エラー — トークンは残してエラー表示
+      return { kind: "networkError" };
+    }
+    // 認証エラー — トークン無効
+    clearToken();
+    return { kind: "unauthorized" };
+  }
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
-  const [loading, setLoading] = useState(true);
+  // トークンがなければ確認するものがないので、最初から読み込み完了にしておく
+  const [loading, setLoading] = useState(() => getToken() !== null);
   const [apiError, setApiError] = useState<string | null>(null);
+
+  const applyMe = useCallback((result: MeResult) => {
+    if (result.kind === "ok") {
+      setUser(result.user);
+      setApiError(null);
+    } else if (result.kind === "networkError") {
+      setApiError("サーバーに接続できません");
+    } else {
+      setUser(null);
+    }
+    setLoading(false);
+  }, []);
 
   const refresh = useCallback(async () => {
     if (!getToken()) {
@@ -42,24 +77,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLoading(false);
       return;
     }
-    try {
-      const me = await fetchMe();
-      setUser({ id: me.id, loginId: me.loginId, nickname: me.nickname });
-      setApiError(null);
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : "";
-      if (msg.includes("Failed to fetch") || msg.includes("NetworkError")) {
-        // サーバー接続エラー — トークンは残してエラー表示
-        setApiError("サーバーに接続できません");
-      } else {
-        // 認証エラー — トークン無効
-        clearToken();
-        setUser(null);
-      }
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+    applyMe(await loadMe());
+  }, [applyMe]);
 
   const logout = useCallback(() => {
     clearToken();
@@ -69,9 +88,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const clearApiError = useCallback(() => setApiError(null), []);
 
+  // 起動時の確認。state は通信が終わってから（.then の中で）更新する
   useEffect(() => {
-    refresh();
-  }, [refresh]);
+    if (getToken()) loadMe().then(applyMe);
+  }, [applyMe]);
 
   return (
     <AuthContext.Provider value={{ user, loading, apiError, refresh, logout, clearApiError }}>
