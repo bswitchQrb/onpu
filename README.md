@@ -130,3 +130,7 @@ npm run lint
 | `VITE_API_BASE_URL` | バックエンド API の URL | (空文字 = Viteプロキシ使用) |
 
 開発時は Vite のプロキシ (`/api` → `localhost:8080`) を使うため設定不要です。
+
+## ライセンス
+
+[MIT License](LICENSE) © 2026 bswitchQrb
