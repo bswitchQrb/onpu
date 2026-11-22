@@ -2,7 +2,7 @@
 
 五線譜に表示された音符を、ピアノ鍵盤UIから回答する音楽クイズアプリです。
 
-**本番**: https://onpu.onrender.com/onpu/
+**本番**: https://bee2.dev/onpu/
 
 ## システム構成
 
