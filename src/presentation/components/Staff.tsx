@@ -26,13 +26,18 @@ export default function Staff({ notes, clef }: StaffProps) {
     // 前回の描画をクリア
     el.innerHTML = "";
 
+    // VexFlow は resize() で描画先の要素の幅を書き換える（5.3 からは "240px" のように単位付きで効く）。
+    // 外側の要素（幅 100%・中央寄せ）を縮めないように、描画用の要素を中に作って渡す
+    const target = document.createElement("div");
+    el.appendChild(target);
+
     const vexClef = toVexFlowClef(clef);
     const scale = 1.5;
     const staveWidth = 160;
     const width = staveWidth * scale;
     const height = 200;
 
-    const renderer = new Renderer(el, Renderer.Backends.SVG);
+    const renderer = new Renderer(target, Renderer.Backends.SVG);
     renderer.resize(width, height);
     const context = renderer.getContext();
     context.scale(scale, scale);
