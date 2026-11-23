@@ -68,38 +68,9 @@
 - **Render**（ホスティング）
 - **Supabase**（PostgreSQL データベース）
 
-## ディレクトリ構成
+## コードの構成
 
-```
-src/
-├── main.tsx                     # エントリーポイント
-├── index.css                    # グローバルスタイル
-├── domain/                      # ドメイン層（ビジネスロジック・型定義）
-│   ├── clef.ts                  # 音部記号の型（G Clef / F Clef）
-│   ├── note.ts                  # 音符データの型定義（NoteData）
-│   ├── chord.ts                 # コード定義
-│   └── noteCollection.ts       # 音符データの定義（音域・鍵盤用データ）
-├── application/                 # アプリケーション層（ユースケース）
-│   └── quizService.ts          # クイズのロジック（出題・シャッフル）
-├── infrastructure/              # インフラ層（外部通信）
-│   ├── apiClient.ts            # API クライアント（JWT管理）
-│   ├── authApi.ts              # 認証 API
-│   ├── answerApi.ts            # 回答・成績 API
-│   └── questionApi.ts          # 出題 API
-├── presentation/                # プレゼンテーション層（UI）
-│   ├── App.tsx                  # メインコンポーネント
-│   ├── App.css                  # アプリ全体のスタイル
-│   ├── AuthContext.tsx          # 認証コンテキスト
-│   └── components/
-│       ├── Staff.tsx            # 五線譜コンポーネント（VexFlow）
-│       ├── PianoKeyboard.tsx    # ピアノ鍵盤コンポーネント
-│       └── HamburgerMenu.tsx   # モード切替メニュー
-└── i18n/                        # 国際化（i18n）
-    ├── index.ts                 # 翻訳関数（t, tClef）
-    └── ja.json                  # 日本語テキスト定義
-```
-
-### アーキテクチャ（クリーンアーキテクチャ）
+`src/` の下を役割ごとに分けています。
 
 - **domain/**: 音楽理論に基づくドメインモデル。UIやフレームワークに依存しない
 - **application/**: ドメインを使ったユースケース（クイズ出題ロジック）
